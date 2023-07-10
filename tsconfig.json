@@ -20,6 +20,14 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
+
+  "@typescript-eslint/no-empty-interface": [
+    "error",
+    {
+      "allowSingleExtends": true
+    }
+  ],
+
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
