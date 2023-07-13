@@ -9,7 +9,6 @@ export function App() {
     <ThemeProvider theme={defaultTheme}>
       <BrowserRouter>
         <Router />
-        <h1>React App</h1>
       </BrowserRouter>
       <GlobalStyle />
     </ThemeProvider>
