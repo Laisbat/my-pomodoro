@@ -11,7 +11,8 @@ import {
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { differenceInSeconds } from 'date-fns'
 
 const newCycleFormSchema = zod.object({
   task: zod.string().min(3, 'A tarefa deve conter no mínimo 3 caracteres'),
@@ -24,6 +25,7 @@ interface Cycle {
   id: string
   task: string
   minutesAmount: number
+  startDate: Date
 }
 
 export function Home() {
@@ -39,19 +41,35 @@ export function Home() {
     },
   })
 
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  useEffect(() => {
+    let interval: number
+    if (activeCycle) {
+      interval = setInterval(() => {
+        setAmountOfCyclesPassed(
+          differenceInSeconds(new Date(), activeCycle?.startDate),
+        )
+      }, 1000)
+    }
+    return () => {
+      clearInterval(interval)
+    }
+  }, [activeCycle])
+
   function handleCreateNewCycle(data: INewCycleForm) {
     const id = String(new Date().getTime())
     const newCycle: Cycle = {
       id,
       task: data.task,
       minutesAmount: data.minutesAmount,
+      startDate: new Date(),
     }
     setCycles((state) => [...state, newCycle])
     setActiveCycleId(id)
+    setAmountOfCyclesPassed(0)
     reset()
   }
-
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   const totalSeconds = activeCycle ? activeCycle?.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - amountOfCyclesPassed : 0
@@ -63,6 +81,11 @@ export function Home() {
   const seconds = String(secondsAmount).padStart(2, '0')
 
   const { task } = watch()
+
+  useEffect(() => {
+    if (activeCycle) document.title = `${minutes}:${seconds} | Pomodoro`
+  }, [minutes, seconds, activeCycle])
+
   const isSubmiteDisabled = !task
 
   return (
