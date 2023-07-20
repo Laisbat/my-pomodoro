@@ -18,6 +18,7 @@ interface CyclesContextData {
   activeCycle: Cycle | undefined
   activeCycleId: string | null
   amountOfCyclesPassed: number
+  cycles: Cycle[]
   markCurrentCycleAsFinished(): void
   setSecondsPassed: (seconds: number) => void
   createNewCycle: (data: CreateCycleData) => void
@@ -66,7 +67,6 @@ export function CyclesContextProvider({
     setCycles((state) => [...state, newCycle])
     setActiveCycleId(id)
     setAmountOfCyclesPassed(0)
-    // reset()
   }
 
   function handleStopCycle() {
@@ -90,6 +90,7 @@ export function CyclesContextProvider({
         activeCycle,
         activeCycleId,
         amountOfCyclesPassed,
+        cycles,
         createNewCycle,
         handleStopCycle,
         markCurrentCycleAsFinished,

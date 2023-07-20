@@ -9,6 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { NewCycleForm } from './components/NewCycleForm'
 import { Countdown } from './components/CountDown'
+import { useContext } from 'react'
+import { CyclesContext } from '../../contexts/CyclesContext'
 
 const newCycleFormSchema = zod.object({
   task: zod.string().min(3, 'A tarefa deve conter no mínimo 3 caracteres'),
@@ -18,6 +20,9 @@ const newCycleFormSchema = zod.object({
 type INewCycleForm = zod.infer<typeof newCycleFormSchema>
 
 export function Home() {
+  const { activeCycle, handleStopCycle, createNewCycle } =
+    useContext(CyclesContext)
+
   const newCycleForm = useForm<INewCycleForm>({
     resolver: zodResolver(newCycleFormSchema),
     defaultValues: {
@@ -26,7 +31,12 @@ export function Home() {
     },
   })
 
-  const { handleSubmit, watch, reset } = newCycleForm
+  const { handleSubmit, reset, watch } = newCycleForm
+
+  function handleCreateNewCycle(data: INewCycleForm) {
+    createNewCycle(data)
+    reset()
+  }
 
   const { task } = watch()
   const isSubmiteDisabled = !task
