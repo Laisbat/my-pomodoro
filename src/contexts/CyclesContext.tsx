@@ -1,5 +1,10 @@
-import { ReactNode, createContext, useReducer, useState } from 'react'
-import { ActionTypes, Cycle, cyclesReducer } from '../reducers/cycles'
+import { ReactNode, createContext, useMemo, useReducer, useState } from 'react'
+import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
+import {
+  addNewCycleAction,
+  finishCurrentCycleAction,
+  interruptCurrentCycleAction,
+} from '../reducers/cycles/actions'
 
 interface CreateCycleData {
   task: string
@@ -40,7 +45,7 @@ export function CyclesContextProvider({
   }
 
   function markCurrentCycleAsFinished() {
-    dispatch({ type: ActionTypes.FINISH_CURRENT_CYCLE, payload: activeCycleId })
+    dispatch(finishCurrentCycleAction())
   }
 
   function createNewCycle(data: CreateCycleData) {
@@ -52,30 +57,30 @@ export function CyclesContextProvider({
       minutesAmount: data.minutesAmount,
       startDate: new Date(),
     }
-    dispatch({ type: ActionTypes.ADD_NEW_CYCLE, payload: newCycle })
+    dispatch(addNewCycleAction(newCycle))
     setAmountOfCyclesPassed(0)
   }
 
   function handleStopCycle() {
-    dispatch({
-      type: ActionTypes.INTERRUPT_CURRENT_CYCLE,
-      payload: activeCycleId,
-    })
+    dispatch(interruptCurrentCycleAction())
   }
 
+  const contextValue = useMemo(
+    () => ({
+      activeCycle,
+      activeCycleId,
+      amountOfCyclesPassed,
+      cycles,
+      createNewCycle,
+      handleStopCycle,
+      markCurrentCycleAsFinished,
+      setSecondsPassed,
+    }),
+    [activeCycle, activeCycleId, amountOfCyclesPassed, cycles],
+  )
+
   return (
-    <CyclesContext.Provider
-      value={{
-        activeCycle,
-        activeCycleId,
-        amountOfCyclesPassed,
-        cycles,
-        createNewCycle,
-        handleStopCycle,
-        markCurrentCycleAsFinished,
-        setSecondsPassed,
-      }}
-    >
+    <CyclesContext.Provider value={contextValue}>
       {children}
     </CyclesContext.Provider>
   )
