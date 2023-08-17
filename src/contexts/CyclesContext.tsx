@@ -3,6 +3,7 @@ import {
   createContext,
   ReactNode,
   useEffect,
+  useMemo,
   useReducer,
   useState,
 } from 'react'
@@ -101,19 +102,22 @@ export function CyclesContextProvider({
     dispatch(interruptCurrentCycleAction())
   }
 
+  const contextValue = useMemo(
+    () => ({
+      activeCycle,
+      activeCycleId,
+      amountSecondsPassed,
+      cycles,
+      createNewCycle,
+      interruptCurrentCycle,
+      markCurrentCycleAsFinished,
+      setSecondsPassed,
+    }),
+    [activeCycle, activeCycleId, amountSecondsPassed, cycles],
+  )
+
   return (
-    <CyclesContext.Provider
-      value={{
-        cycles,
-        activeCycle,
-        activeCycleId,
-        markCurrentCycleAsFinished,
-        amountSecondsPassed,
-        setSecondsPassed,
-        createNewCycle,
-        interruptCurrentCycle,
-      }}
-    >
+    <CyclesContext.Provider value={contextValue}>
       {children}
     </CyclesContext.Provider>
   )

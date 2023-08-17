@@ -20,7 +20,7 @@ const newCycleFormSchema = zod.object({
 type INewCycleForm = zod.infer<typeof newCycleFormSchema>
 
 export function Home() {
-  const { activeCycle, markCurrentCycleAsFinished, createNewCycle } =
+  const { activeCycle, interruptCurrentCycle, createNewCycle } =
     useContext(CyclesContext)
 
   const newCycleForm = useForm<INewCycleForm>({
@@ -49,10 +49,7 @@ export function Home() {
         </FormProvider>
         <Countdown />
         {activeCycle ? (
-          <StopCountdownButton
-            type="button"
-            onClick={markCurrentCycleAsFinished}
-          >
+          <StopCountdownButton type="button" onClick={interruptCurrentCycle}>
             <HandPalm size={24} />
             PARAR
           </StopCountdownButton>

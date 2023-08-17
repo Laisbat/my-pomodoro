@@ -18,6 +18,15 @@ interface CyclesState {
 export function cyclesReducer(state: CyclesState, action: any) {
   switch (action.type) {
     case ActionTypes.ADD_NEW_CYCLE:
+      // return {
+      //   ...state,
+      //   cycles: [...state.cycles, action.payload.newCycle],
+      //   activeCycleId: action.payload.newCycle.id,
+      // }
+
+      // The `produce` function from the `immer` library allows us to write
+      // reducers that look like they are mutating the state, but are actually
+      // creating a copy of the state and applying the changes to the copy.
       return produce(state, (draft) => {
         draft.cycles.push(action.payload.newCycle)
         draft.activeCycleId = action.payload.newCycle.id
